@@ -19,7 +19,7 @@ jobs:
         node-version: '16'  # Use your desired Node.js version
 
     - name: Build frontend
-      working-directory: ./frontend-webapp/frontend # Path to your frontend
+      working-directory: ./frontend-webapp/frontend/public # Path to your frontend
       run: |
         npm install
         npm run build
