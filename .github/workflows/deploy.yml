@@ -3,7 +3,7 @@ name: Deploy Fullstack App
 on:
   push:
     branches:
-      - main  # Change this to your main branch if needed
+      - main  
 
 jobs:
   build-and-deploy:
