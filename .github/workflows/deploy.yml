@@ -21,7 +21,7 @@ jobs:
     - name: Build frontend
       #working-directory: ./frontend-webapp/frontend/public # Path to your frontend
       run: |
-        cd ./frontend-webapp/frontend/public
+        #cd ./frontend-webapp/frontend/public
         npm install
         npm run build
 
