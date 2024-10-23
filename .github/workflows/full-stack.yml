@@ -22,7 +22,7 @@ jobs:
       working-directory: ./backend-api  # Path to your backend
       run: |
         npm install
-        npm run build  # If applicable
+      
 
     - name: Build frontend
       working-directory: ./frontend-webapp/webapp-frontend  # Set the working directory here
