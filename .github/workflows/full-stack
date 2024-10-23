@@ -1,0 +1,57 @@
+name: Deploy Fullstack App
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  # Use your desired Node.js version
+
+    - name: Build backend
+      working-directory: ./backend  # Path to your backend
+      run: |
+        npm install
+        npm run build  # If applicable
+
+    - name: Build frontend
+      working-directory: ./frontend-webapp/webapp-frontend  # Set the working directory here
+      run: |
+        npm install
+        npm run build
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: <region>  # Specify your AWS region
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and push frontend Docker image
+      run: |
+        docker build -t my-frontend ./frontend-webapp/webapp-frontend  # Adjust context as necessary
+        docker tag my-frontend:latest <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-frontend:latest
+        docker push <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-frontend:latest
+
+    - name: Build and push backend Docker image
+      run: |
+        docker build -t my-backend ./backend  # Adjust context as necessary
+        docker tag my-backend:latest <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-backend:latest
+        docker push <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-backend:latest
+
+    - name: Deploy to ECS
+      run: |
+        aws ecs update-service --cluster <your-cluster-name> --service <your-service-name> --force-new-deployment
