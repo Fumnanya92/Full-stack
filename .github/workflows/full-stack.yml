@@ -16,42 +16,53 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'  # Use your desired Node.js version
+        node-version: '18'
 
-    - name: Build backend
+    - name: Install backend dependencies
       working-directory: ./backend-api  # Path to your backend
       run: |
         npm install
       
+    - name: Build and push backend-api Docker image
+      run: |
+        docker build . --file Dockerfile --tag backend-api:$(date +'%Y%m%d%H%M')
 
-    - name: Build frontend
-      working-directory: ./frontend-webapp/webapp-frontend  # Set the working directory here
+    - name: Install frontend dependencies
+      working-directory: ./frontend-webapp/webapp-frontend  # Set the working directory for frontend
       run: |
         npm install
+    
+    - name: Build frontend
+      working-directory: ./frontend-webapp/webapp-frontend  # Set the working directory for frontend
+      run: |
         npm run build
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2  # Specify your AWS region
-
-    - name: Login to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v1
-
+    
     - name: Build and push frontend Docker image
       run: |
-        docker build -t my-frontend ./frontend-webapp/webapp-frontend  # Adjust context as necessary
-        docker tag my-frontend:latest <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-frontend:latest
-        docker push <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-frontend:latest
+        docker build . --file Dockerfile --tag frontend-webapp:$(date +'%Y%m%d%H%M')
 
-    - name: Build and push backend Docker image
-      run: |
-        docker build -t my-backend ./backend  # Adjust context as necessary
-        docker tag my-backend:latest <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-backend:latest
-        docker push <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-backend:latest
+ #   - name: Configure AWS credentials
+ #     uses: aws-actions/configure-aws-credentials@v1
+ #     with:
+  #      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+   #     aws-region: us-west-2  # Specify your AWS region
 
-    - name: Deploy to ECS
-      run: |
-        aws ecs update-service --cluster <your-cluster-name> --service <your-service-name> --force-new-deployment
+   # - name: Login to Amazon ECR
+   #   uses: aws-actions/amazon-ecr-login@v1
+
+   # - name: Build and push frontend Docker image
+   #   run: |
+   #     docker build -t my-frontend ./frontend-webapp/webapp-frontend  # Adjust context as necessary
+   #     docker tag my-frontend:latest <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-frontend:latest
+   #     docker push <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-frontend:latest
+
+   # - name: Build and push backend Docker image
+   #   run: |
+   #     docker build -t my-backend ./backend  # Adjust context as necessary
+   #     docker tag my-backend:latest <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-backend:latest
+   #     docker push <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/my-backend:latest
+
+   #- name: Deploy to ECS
+   #  run: |
+   #    aws ecs update-service --cluster <your-cluster-name> --service <your-service-name> --force-new-deployment
