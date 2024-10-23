@@ -19,7 +19,7 @@ jobs:
         node-version: '18'  # Use your desired Node.js version
 
     - name: Build backend
-      working-directory: ./backend  # Path to your backend
+      working-directory: ./backend-api  # Path to your backend
       run: |
         npm install
         npm run build  # If applicable
