@@ -24,8 +24,10 @@ jobs:
         npm install
       
     - name: Build and push backend-api Docker image
+      working-directory: ./backend-api  # Make sure to set this correctly
       run: |
         docker build . --file Dockerfile --tag backend-api:$(date +'%Y%m%d%H%M')
+      
 
     - name: Install frontend dependencies
       working-directory: ./frontend-webapp/webapp-frontend  # Set the working directory for frontend
@@ -38,6 +40,7 @@ jobs:
         npm run build
     
     - name: Build and push frontend Docker image
+      working-directory: ./frontend-webapp
       run: |
         docker build . --file Dockerfile --tag frontend-webapp:$(date +'%Y%m%d%H%M')
 
