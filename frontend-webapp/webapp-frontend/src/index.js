@@ -7,5 +7,5 @@ ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root')  // This links to the 'root' div in index.html
+  document.getElementById('root')  // This links to the 'root' div in index.html ei
 );
